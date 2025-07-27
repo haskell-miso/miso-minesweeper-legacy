@@ -4,12 +4,9 @@ import Control.Monad.Random
     ( Rand
     , RandomGen
     , getRandomR
-    , getStdGen
-    , runRand
-    , split
     )
 import Control.Monad.State
-import Data.Map (Map, (!), elems, fromList, insert, toList)
+import Data.Map (Map, (!), fromList, insert, toList)
 
 import Msg
 import Pos
@@ -60,7 +57,7 @@ exposeMines :: State Board [(Pos, Maybe Cell)]
 exposeMines = do
     board <- get
     let toExpose =
-            filter (\(pos, cell) -> (not . exposed) cell && mined cell) $
+            filter (\(_, cell) -> (not . exposed) cell && mined cell) $
             toList board
         modifications =
             fmap (\(p, c) -> (p, Just $ c {exposed = True})) toExpose

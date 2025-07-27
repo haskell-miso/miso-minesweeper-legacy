@@ -1,3 +1,4 @@
 *~
-*.js_o
-*.js_hi
+dist*
+result
+public

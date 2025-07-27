@@ -1,12 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
+
+module Main (main) where
 
 import Control.Monad.Random (Rand, getRandom, getRandomR, runRand)
 import Control.Monad.State (State, get, put, runState)
 import Data.Map (Map, (!), fromList, insert, mapWithKey, toList)
 import System.Random
+import Miso.Style ((=:), style_)
 
-import Miso (width_, height_, div_, style_, button_, text, startApp, defaultEvents, noEff, Effect, App(..), View)
+import Miso hiding (style_)
+import Miso.Lens (_id)
+import Miso.Style hiding (ms)
 import Miso.String (MisoString, ms, pack)
 import Miso.Svg hiding (height_, style_, width_)
 
@@ -36,7 +40,7 @@ showSquare (xCoord, yCoord) cell =
         , y_ "0.05"
         , width_ "0.9"
         , height_ "0.9"
-        , style_ $ fromList [("fill", ms $ getColor cell)]
+--        , style_ [ prop "fill" $ ms (getColor cell) ]
         , onClick (LeftPick (xCoord, yCoord))
         , onRightClick (RightPick (xCoord, yCoord))
         ]
@@ -81,9 +85,12 @@ showCell pos cell =
            ]
            (showSquare pos cell : showCellDetail pos cell)
 
-centerStyle :: Map MisoString MisoString
+centerStyle :: [Style]
 centerStyle =
-    fromList [("width", "75%"), ("margin", "0 auto"), ("text-align", "center")]
+    [ "width" =: "75%"
+    , "margin" =: "0 auto"
+    , "text-align" =: "center"
+    ]
 
 viewGame :: Game -> View Msg
 viewGame (board, _) =
@@ -94,7 +101,7 @@ viewGame (board, _) =
         , div_
               [style_ centerStyle]
               [ svg_
-                    [ version_ "1.1"
+                    [ textProp "version" "1.1"
                     , width_ (ms $ show (w * cellSize))
                     , height_ (ms $ show (h * cellSize))
                     ]
@@ -103,26 +110,24 @@ viewGame (board, _) =
         , div_ [style_ centerStyle] [button_ [onClick Reset] [text "reset"]]
         ]
 
-updateGame :: Msg -> Game -> Effect Msg Game
-updateGame msg (board, seed) =
-    case msg of
-        Reset ->
-            let g0 = mkStdGen seed
-                (newBoard, g1) = runRand mkBoard g0
-                (newSeed, _) = runRand getRandom g1
-            in noEff (newBoard, newSeed)
-        _ ->
-            let (_, newBoard) = runState (updateBoard msg) board
-            in noEff (newBoard, seed)
+updateGame :: Msg -> Effect Game Msg
+updateGame msg = do
+  (board, seed) <- get
+  case msg of
+      Reset ->
+          let g0 = mkStdGen seed
+              (newBoard, g1) = runRand mkBoard g0
+              (newSeed, _) = runRand getRandom g1
+          in put (newBoard, newSeed)
+      _ ->
+          let (_, newBoard) = runState (updateBoard msg) board
+          in put (newBoard, seed)
 
 main :: IO ()
 main = do
-    seed <- getStdRandom random
-    let initialAction = Reset
-        model = (mempty, seed)
-        update = updateGame
-        view = viewGame
-        events = Data.Map.insert "contextmenu" False defaultEvents
-        subs = []
-        mountPoint = Nothing
-    startApp App {..}
+  seed <- getStdRandom random
+  run $ startComponent (component (mempty, seed) updateGame viewGame)
+    { initialAction = Just Reset
+    , events = Data.Map.insert "contextmenu" False defaultEvents
+    }
+

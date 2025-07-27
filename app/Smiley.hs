@@ -1,10 +1,9 @@
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Smiley
     ( showFace
     ) where
-
-import Data.Map
 
 import Miso hiding (height_, style_, width_)
 import Miso.String (pack)
@@ -20,7 +19,6 @@ import Miso.Svg
     , r_
     , strokeWidth_
     , stroke_
-    , style_
     , svg_
     , transform_
     , width_
@@ -36,7 +34,7 @@ showFace lost =
              [ g_ [ transform_
                         (pack $
                          "scale (" ++
-                         show sz ++
+                         show @Int sz ++
                          ", " ++ show sz ++ ") " ++ "translate (0.5, 0.5)")
                    ]
                     -- face outline
