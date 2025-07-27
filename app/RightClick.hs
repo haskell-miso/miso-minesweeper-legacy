@@ -4,8 +4,8 @@ module RightClick
     ( onRightClick
     ) where
 
-import Miso.Event.Decoder
-import Miso.Html
+import Miso.Event
+import Miso.Types
 
 onRightClick :: msg -> Attribute msg
 onRightClick message =
@@ -13,4 +13,4 @@ onRightClick message =
         Options {preventDefault = True, stopPropagation = True}
         "contextmenu"
         emptyDecoder
-        (const message)
+        (\_ _ -> message)

@@ -1,7 +1,5 @@
 module Msg where
 
-import Control.Monad.Random (StdGen)
-
 import Pos
 
 data Msg

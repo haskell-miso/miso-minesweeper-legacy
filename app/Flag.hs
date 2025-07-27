@@ -5,7 +5,6 @@ module Flag
     ) where
 
 import Miso
-import Miso.String (MisoString, ms, pack)
 import Miso.Svg hiding (height_, id_, style_, width_)
 
 import Msg

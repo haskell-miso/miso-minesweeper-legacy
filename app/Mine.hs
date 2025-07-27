@@ -6,12 +6,9 @@ module Mine
     ) where
 
 import Miso
-import Miso.String (MisoString, ms, pack)
 import Miso.Svg hiding (height_, id_, style_, width_)
 
 import RightClick
-
-import Data.Map (fromList)
 
 import Msg
 import Pos
