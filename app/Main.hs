@@ -28,7 +28,7 @@ type Game = (Board, Int)
 cellSize :: Int
 cellSize = 20
 
-getColor :: Cell -> String
+getColor :: Cell -> MisoString
 getColor (Cell _ exposed _ _) =
     if exposed
         then "#909090"
