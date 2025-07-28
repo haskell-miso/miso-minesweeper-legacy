@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Main (main) where
@@ -131,3 +132,6 @@ main = do
     , events = Data.Map.insert "contextmenu" False defaultEvents
     }
 
+#ifdef WASM
+foreign export javascript "hs_start" main :: IO ()
+#endif
