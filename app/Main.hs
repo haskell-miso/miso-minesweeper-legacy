@@ -41,7 +41,7 @@ showSquare (xCoord, yCoord) cell =
         , y_ "0.05"
         , width_ "0.9"
         , height_ "0.9"
---        , style_ [ prop "fill" $ ms (getColor cell) ]
+        , style_ [ ("fill", ms (getColor cell)) ]
         , onClick (LeftPick (xCoord, yCoord))
         , onRightClick (RightPick (xCoord, yCoord))
         ]
